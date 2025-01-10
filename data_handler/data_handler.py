@@ -94,4 +94,3 @@ class DataHandler:
             file_name_history=self._full_file_name_history,
             time_manager=time_manager
         )
-    
