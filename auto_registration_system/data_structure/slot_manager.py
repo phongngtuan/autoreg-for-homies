@@ -9,7 +9,8 @@ class SlotManager:
         self._slot_name: str = slot_name
         self._num_players: int = num_players
         self._players: list[str] = []
-        self._reservations: list[Reservation] = []
+        self._pending_reservations: list[str] = []
+        self._non_pending_reservations: list[str] = []
 
     @property
     def slot_name(self) -> str:
@@ -28,76 +29,98 @@ class SlotManager:
         self._players = new_players
 
     @property
-    def reservations(self) -> list[Reservation]:
-        return self._reservations
+    def pending_reservations(self) -> list[str]:
+        return self._pending_reservations
 
-    @reservations.setter
-    def reservations(self, new_reservations: list[Reservation]):
-        self._reservations = new_reservations
+    @pending_reservations.setter
+    def pending_reservations(self, pending_reservation: list[str]):
+        self._pending_reservations = pending_reservation
 
-    def _pop_first_pending_player(self) -> Reservation:
-        for i, reservation in enumerate(self._reservations):
-            if reservation is not None and reservation.is_pending:
-                return self._reservations.pop(i)
-        raise ErrorMaker.make_pending_player_not_found_exception()
+    @property
+    def non_pending_reservations(self) -> list[str]:
+        return self._non_pending_reservations
+
+    @non_pending_reservations.setter
+    def non_pending_reservations(self, non_pending_reservation: list[str]):
+        self._non_pending_reservations = non_pending_reservation
+
+    def _pop_first_pending_player(self) -> str or None:
+        if self._pending_reservations:
+            return self._pending_reservations.pop(0)
+        # for i, reservation in enumerate(self._pending_reservations):
+        #     if reservation is not None and reservation.is_pending:
+        #         return self._reservations.pop(i)
+        return None
 
     # sorting the lists, pending players will be moved to main players if possible,
     # and pending players are placed before non-pending players
     def restructure(self):
-        pending_reserve_players: list[Reservation] = []
-        non_pending_reserve_players: list[Reservation] = []
-
-        for reservation in self._reservations:
-            if reservation.is_pending:
-                pending_reserve_players.append(reservation)
-            else:
-                non_pending_reserve_players.append(reservation)
-        self.reservations = pending_reserve_players + non_pending_reserve_players
+        # pending_reserve_players: list[Reservation] = []
+        # non_pending_reserve_players: list[Reservation] = []
+        #
+        # for reservation in self._reservations:
+        #     if reservation.is_pending:
+        #         pending_reserve_players.append(reservation)
+        #     else:
+        #         non_pending_reserve_players.append(reservation)
+        # self.reservations = pending_reserve_players + non_pending_reserve_players
 
         while len(self._players) < self._num_players:
-            try:
-                reservation = self._pop_first_pending_player()
-                if reservation is None:
-                    break
-                self._players.append(reservation.name)
-            finally:
+            player = self._pop_first_pending_player()
+            if player is None:
                 break
+            self._players.append(player)
 
-    def _is_in_players(self, proposed_name: str) -> bool:
-        for name in self._players:
-            if proposed_name == name:
-                return True
-        return False
+    # def _is_in_players(self, proposed_name: str) -> bool:
+    #     for name in self._players:
+    #         if proposed_name == name:
+    #             return True
+    #     return False
 
-    def _is_in_reservations(self, proposed_name: str) -> bool:
-        for reservation in self._reservations:
-            if proposed_name == reservation.name:
-                return True
-        return False
+    # def _is_in_reservations(self, proposed_name: str) -> bool:
+    #     for player in self._pending_reservations:
+    #         if proposed_name == player:
+    #             return True
+    #     for player in self._non_pending_reservations:
+    #         if proposed_name == player:
+    #             return True
+    #     return False
 
-    def _get_reservation(self, proposed_name: str) -> Reservation or None:
-        for reservation in self._reservations:
-            if proposed_name == reservation.name:
-                return reservation
-        return None
+    # def _get_reservation(self, proposed_name: str) -> Reservation or None:
+    #     for reservation in self._reservations:
+    #         if proposed_name == reservation.name:
+    #             return reservation
+    #     return None
 
     def is_in_any_list(self, proposed_name: str) -> bool:
-        for name in self._players:
-            if proposed_name == name:
-                return True
-        for reservation in self._reservations:
-            if proposed_name == reservation.name:
-                return True
-        return False
+        # for name in self._players:
+        #     if proposed_name == name:
+        #         return True
+        # for reservation in self._reservations:
+        #     if proposed_name == reservation.name:
+        #         return True
+        # return False
+        return (
+                (proposed_name in self._players)
+                or (proposed_name in self._pending_reservations)
+                or (proposed_name in self._non_pending_reservations)
+        )
 
-    def _pop_non_pending_player_from_reservations(self, proposed_name: str) -> Reservation or None:
-        for i, reservation in enumerate(self._reservations):
-            if proposed_name == reservation.name:
-                if reservation.is_pending:
-                    return None
-                else:
-                    return self._reservations.pop(i)
-        return None
+    def _pop_non_pending_player_from_reservations(self, proposed_name: str) -> bool:
+        # for i, player in enumerate(self._non_pending_reservations):
+        #     if proposed_name == reservation.name:
+        #         if reservation.is_pending:
+        #             return None
+        #         else:
+        #             return self._reservations.pop(i)
+        # return None
+        found = False
+        try:
+            self._non_pending_reservations.remove(proposed_name)
+            found = True
+        finally:
+            pass
+        return found
 
     def register(self, proposed_name: str):
         # Potentially moving from reservations to main players
