@@ -40,13 +40,10 @@ class RegistrationData:
             return
         raise ErrorMaker.make_slot_not_found_exception(message=slot_label)
 
-    def reserve_player(self, slot_label: str, player: str, is_pending: bool = False):
+    def reserve_player(self, slot_label: str, player: str):
         slot = self.get_slot(slot_label=slot_label)
         if slot is not None:
-            slot.reserve(
-                proposed_name=player,
-                is_pending=is_pending
-            )
+            slot.reserve(proposed_name=player)
             return
         raise ErrorMaker.make_slot_not_found_exception(message=slot_label)
 

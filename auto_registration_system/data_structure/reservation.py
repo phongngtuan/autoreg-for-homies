@@ -1,4 +1,4 @@
-class Reservation:
+class _Reservation:
 
     def __init__(self, name: str, is_pending: bool):
         self._name: str = name

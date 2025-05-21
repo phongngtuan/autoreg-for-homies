@@ -1,6 +1,5 @@
 from auto_registration_system.data_structure.registration_data import RegistrationData
 from string_parser.string_parser import StringParser
-from ..data_structure.reservation import Reservation
 from ..data_structure.slot_manager import SlotManager
 from ..exception.error_maker import ErrorMaker
 
@@ -44,9 +43,15 @@ class DeregHandler:
                             found = True
                             break
                     if not found:
-                        for i, reservation in enumerate(slot.reservations):
-                            if reservation.name == name:
-                                slot.reservations[i] = Reservation(name="", is_pending=False)
+                        for i, player_name in enumerate(slot.pending_reservations):
+                            if name == player_name:
+                                slot.pending_reservations[i] = ""
+                                found = True
+                                break
+                    if not found:
+                        for i, player_name in enumerate(slot.non_pending_reservations):
+                            if name == player_name:
+                                slot.non_pending_reservations[i] = ""
                                 found = True
                                 break
                     if found:
@@ -59,15 +64,20 @@ class DeregHandler:
                         } does not exist in slot {slot_label}\\!\n"
         # clean empty elements
         new_players: list[str] = list()
-        new_reservations: list[Reservation] = list()
+        new_pending_reservations: list[str] = list()
+        new_non_pending_reservations: list[str] = list()
         for player in slot.players:
             if player != "":
                 new_players.append(player)
-        for reservation in slot.reservations:
-            if reservation is not None and reservation.name != "":
-                new_reservations.append(reservation)
+        for player in slot.pending_reservations:
+            if player != "":
+                new_pending_reservations.append(player)
+        for player in slot.non_pending_reservations:
+            if player != "":
+                new_non_pending_reservations.append(player)
         slot.players = new_players
-        slot.reservations = new_reservations
+        slot.pending_reservations = new_pending_reservations
+        slot.non_pending_reservations = new_non_pending_reservations
         slot.restructure()
         if count_processed == 0:
             return "There is nothing changed\\!"

@@ -2,27 +2,27 @@ from typing import BinaryIO
 
 from telegram import MessageEntity
 
-from command_handler.handler_aka import AkaHandler
-from command_handler.handler_allplayable import AllpendingHandler
-from data_structure.chat_manager import ChatManager
-from command_handler.handler_av import AvHandler
-from command_handler.handler_dereg import DeregHandler
-from command_handler.handler_reg import RegHandler
-from command_handler.handler_reserve import ReserveHandler
-from data_structure.lock_manager import LockManager
-from data_structure.registration_data import RegistrationData
-from data_structure.admin_manager import AdminManager
-from command_handler.handler_new import NewHandler
-from data_structure.release_time_manager import ReleaseTimeManager
-from exception.error_maker import ErrorMaker
-from exception.exception_syntax_error import SyntaxErrorException
-from term import Term
+from auto_registration_system.command_handler.handler_aka import AkaHandler
+from auto_registration_system.command_handler.handler_allplayable import AllpendingHandler
+from auto_registration_system.data_structure.chat_manager import ChatManager
+from auto_registration_system.command_handler.handler_av import AvHandler
+from auto_registration_system.command_handler.handler_dereg import DeregHandler
+from auto_registration_system.command_handler.handler_reg import RegHandler
+from auto_registration_system.command_handler.handler_reserve import ReserveHandler
+from auto_registration_system.data_structure.lock_manager import LockManager
+from auto_registration_system.data_structure.registration_data import RegistrationData
+from auto_registration_system.data_structure.admin_manager import AdminManager
+from auto_registration_system.command_handler.handler_new import NewHandler
+from auto_registration_system.data_structure.release_time_manager import ReleaseTimeManager
+from auto_registration_system.exception.error_maker import ErrorMaker
+from auto_registration_system.exception.exception_syntax_error import SyntaxErrorException
+from auto_registration_system.term import Term
 from config import Config
 from string_parser.string_parser import StringParser
-from data_structure.identity_manager import IdentityManager
-from data_structure.time_manager import TimeManager
+from auto_registration_system.data_structure.identity_manager import IdentityManager
+from auto_registration_system.data_structure.time_manager import TimeManager
 from data_handler.data_handler import DataHandler
-from data_structure.reminder import Reminder
+from auto_registration_system.data_structure.reminder import Reminder
 from tracer import Tracer
 
 

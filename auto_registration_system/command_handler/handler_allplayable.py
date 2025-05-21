@@ -6,7 +6,9 @@ class AllpendingHandler:
     def handle(data: RegistrationData) -> str:
         for date_venue in data.bookings_by_date_venue:
             for slot_label in data.bookings_by_date_venue[date_venue]:
-                for reservation in data.bookings_by_date_venue[date_venue][slot_label].reservations:
-                    reservation.is_pending = True
+                slot = data.bookings_by_date_venue[date_venue][slot_label]
+                for player_name in data.bookings_by_date_venue[date_venue][slot_label].non_pending_reservations:
+                    slot.pending_reservations.append(player_name)
+                slot.non_pending_reservations = list()
         data.restructure()
         return "Admin has changed all reserve members to (pending)"

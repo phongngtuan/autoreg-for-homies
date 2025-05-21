@@ -89,7 +89,7 @@ class NewHandler:
                     # remove if last character is ',' or '.'
                     if current_message[-1:] in {",", "."}:
                         current_message = StringParser.remove_redundant_spaces(current_message[:-1])
-                finally:
+                except Exception:
                     pass
 
                 # abort if empty string
@@ -126,10 +126,9 @@ class NewHandler:
                         if last_word == Term.PENDING:
                             current_message = StringParser.remove_last_word(message=current_message)
                             if len(current_message) > 0:
-                                data.reserve_player(
+                                data.register_player(
                                     slot_label=current_slot_label,
-                                    player=current_message.title(),
-                                    is_pending=True
+                                    player=current_message.title()
                                 )
                         else:
                             data.reserve_player(
