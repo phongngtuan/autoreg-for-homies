@@ -48,8 +48,8 @@ class AkaHandler:
         if affected_alias == "":
             alias = identity_manager.get_alias(telegram_id=affected_id)
             if alias is None:
-                return f"Bạn chưa có alias!"
-            return f"Alias của bạn là '{alias}'"
+                return f"Your alias has not been set!"
+            return f"Your alias is '{alias}'"
         # else:
         identity_manager.set_alias(affected_id, affected_alias)
-        return f"Alias mới của bạn là '{affected_alias}'"
+        return f"Your new alias is '{affected_alias}'"
