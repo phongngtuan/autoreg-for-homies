@@ -93,11 +93,10 @@ class SlotManager:
 
     def register(self, proposed_name: str):
         # Potentially moving from reservations to main players
-        if len(self._players) < self._num_players:
-            is_successful_popping_player = self._remove_player_from_non_pending_reservations(proposed_name=proposed_name)
-            if is_successful_popping_player:
-                self.register(proposed_name=proposed_name)
-                return
+        is_successful_popping_player = self._remove_player_from_non_pending_reservations(proposed_name=proposed_name)
+        if is_successful_popping_player:
+            self.register(proposed_name=proposed_name)
+            return
 
         # prioritize to append to main list. If not then append to pending reservations
         if self.is_in_any_list(proposed_name=proposed_name):
