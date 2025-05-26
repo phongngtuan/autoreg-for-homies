@@ -1,3 +1,5 @@
+from http.client import responses
+
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, \
     ReplyKeyboardRemove, ForceReply, User, Message, CallbackQuery
 from telegram.constants import MessageEntityType, ParseMode
@@ -9,6 +11,8 @@ from auto_registration_system.data_structure.chat_manager import ChatManager
 from auto_registration_system.data_structure.deletion_queue import DeletionQueue
 from auto_registration_system.data_structure.registration_data import RegistrationData
 from auto_registration_system.data_structure.time_manager import TimeManager
+from auto_registration_system.command import Command
+from auto_registration_system.term import Term
 from tracer import Tracer
 from string_parser.string_parser import StringParser
 from data_handler.data_handler import DataHandler
@@ -54,35 +58,6 @@ class TelegramCommandHandler:
     last_av_chat_id = None
     last_av_message_id = None
 
-    COMMAND_START = "start"
-    COMMAND_HELLO = "hello"
-    COMMAND_RETRIEVE = "retrieve"
-    COMMAND_ALL = "all"
-    COMMAND_NEW = "new"
-    COMMAND_REG = "reg"
-    COMMAND_RG = "rg"
-    COMMAND_RESERVE = "reserve"
-    COMMAND_RS = "rs"
-    COMMAND_DEREG = "dereg"
-    COMMAND_DRG = "drg"
-    COMMAND_ADMIN = "admin"
-    COMMAND_AV = "av"
-    COMMAND_ALLPENDING = "allpending"
-    COMMAND_LOCK = "lock"
-    COMMAND_UNLOCK = "unlock"
-    COMMAND_HELP = "help"
-    COMMAND_HISTORY = "history"
-    COMMAND_AKA = "aka"
-    COMMAND_RESET = "reset"
-    COMMAND_NOTITIME = "notitime"
-    COMMAND_RT = "rt"  # command functioning is not developed yet
-    CALLBACK_DATA_HELP = f"_{COMMAND_HELP}"
-    CALLBACK_DATA_ALL = f"_{COMMAND_ALL}"
-    CALLBACK_DATA_DRG = f"_{COMMAND_DRG}"
-    CALLBACK_DATA_AV = f"_{COMMAND_AV}"
-    CALLBACK_DATA_RG = f"_{COMMAND_RG}"
-    CALLBACK_DATA_RT = f"_{COMMAND_RT}"
-
     SECOND_CLICK_TO_DEREGISTER = False
 
     @staticmethod
@@ -97,7 +72,7 @@ class TelegramCommandHandler:
             try:
                 TelegramCommandHandler.auto_reg_system.handle_new(
                     username="*",  # special username for enforcing admin
-                    message=f"/{TelegramCommandHandler.COMMAND_NEW} {main_list_as_str}",
+                    message=f"/{Command.COMMAND_NEW} {main_list_as_str}",
                     chat_id=Config.default_chat_id
                 )
                 print("Main list is loaded successfully!")
@@ -109,7 +84,7 @@ class TelegramCommandHandler:
             try:
                 is_release_time_set_successfully, message = TelegramCommandHandler.auto_reg_system.handle_notitime(
                     username="*",  # special username for enforcing admin
-                    message=f"/{TelegramCommandHandler.COMMAND_NOTITIME} {release_time_as_str}",
+                    message=f"/{Command.COMMAND_NOTITIME} {release_time_as_str}",
                     time_manager=TelegramCommandHandler.time_manager
                 )
                 print(f"{message}")
@@ -124,7 +99,7 @@ class TelegramCommandHandler:
             try:
                 TelegramCommandHandler.auto_reg_system.handle_new(
                     username="*",  # special username for enforcing admin
-                    message=f"/{TelegramCommandHandler.COMMAND_NEW} {pre_released_list_str}",
+                    message=f"/{Command.COMMAND_NEW} {pre_released_list_str}",
                     chat_id=0,  # chat_id is set for making pre-released list
                 )
                 print(TelegramCommandHandler.auto_reg_system.get_all_slots_as_string(is_main_data=False))
@@ -212,11 +187,11 @@ class TelegramCommandHandler:
 
     @staticmethod
     def make_callback_data_for_rg(slot_label: str) -> str:
-        return f"{TelegramCommandHandler.CALLBACK_DATA_RG} {slot_label}"
+        return f"{Command.CALLBACK_DATA_RG} {slot_label}"
 
     @staticmethod
     def make_callback_data_for_drg_for_specific_slot(telegram_id: int, slot_label: str) -> str:
-        return f"{TelegramCommandHandler.CALLBACK_DATA_DRG} {telegram_id} {slot_label}"
+        return f"{Command.CALLBACK_DATA_DRG} {telegram_id} {slot_label}"
 
     @staticmethod
     def make_inline_buttons_for_registration(data: RegistrationData) -> InlineKeyboardMarkup:
@@ -243,30 +218,30 @@ class TelegramCommandHandler:
         # add buttons all and help
         button_list.append([
             # InlineKeyboardButton(
-            #     text=TelegramCommandHandler.COMMAND_DRG,
-            #     callback_data=TelegramCommandHandler.CALLBACK_DATA_DRG
+            #     text=Command.COMMAND_DRG,
+            #     callback_data=Command.CALLBACK_DATA_DRG
             # ),
             InlineKeyboardButton(
-                text=TelegramCommandHandler.COMMAND_ALL,
-                callback_data=TelegramCommandHandler.CALLBACK_DATA_ALL
+                text=Command.COMMAND_ALL,
+                callback_data=Command.CALLBACK_DATA_ALL
             ),
             InlineKeyboardButton(
-                text=TelegramCommandHandler.COMMAND_AV,
-                callback_data=TelegramCommandHandler.CALLBACK_DATA_AV
+                text=Command.COMMAND_AV,
+                callback_data=Command.CALLBACK_DATA_AV
             ),
             InlineKeyboardButton(
-                text=TelegramCommandHandler.COMMAND_HELP,
-                callback_data=TelegramCommandHandler.CALLBACK_DATA_HELP
+                text=Command.COMMAND_HELP,
+                callback_data=Command.CALLBACK_DATA_HELP
             ),
         ])
         button_list.append([
             InlineKeyboardButton(
                 text="release time",
-                callback_data=TelegramCommandHandler.CALLBACK_DATA_RT
+                callback_data=Command.CALLBACK_DATA_RT
             ),
             InlineKeyboardButton(
                 text="deregister",
-                callback_data=TelegramCommandHandler.CALLBACK_DATA_DRG
+                callback_data=Command.CALLBACK_DATA_DRG
             )
         ])
         return InlineKeyboardMarkup(inline_keyboard=button_list)
@@ -301,23 +276,23 @@ class TelegramCommandHandler:
     @staticmethod
     def is_callback_data_rg(query_data: str) -> bool:
         first_word = StringParser.get_first_word(message=query_data)
-        if first_word == TelegramCommandHandler.CALLBACK_DATA_RG:
+        if first_word == Command.CALLBACK_DATA_RG:
             return True
         return False
 
     @staticmethod
     def is_callback_data_rt(query_data: str) -> bool:
-        return query_data == TelegramCommandHandler.CALLBACK_DATA_RT
+        return query_data == Command.CALLBACK_DATA_RT
 
     @staticmethod
     def is_callback_data_drg_initial(query_data: str) -> bool:
-        return query_data == TelegramCommandHandler.CALLBACK_DATA_DRG
+        return query_data == Command.CALLBACK_DATA_DRG
 
     @staticmethod
     def is_callback_data_drg_for_specific_slot(query_data: str) -> bool:
-        callback_data_drg_len = len(TelegramCommandHandler.CALLBACK_DATA_DRG)
+        callback_data_drg_len = len(Command.CALLBACK_DATA_DRG)
         return (len(query_data) > callback_data_drg_len
-                and query_data[:callback_data_drg_len] == TelegramCommandHandler.CALLBACK_DATA_DRG)
+                and query_data[:callback_data_drg_len] == Command.CALLBACK_DATA_DRG)
 
     @staticmethod
     async def run_button_drg_initially(query: CallbackQuery, context: ContextTypes.DEFAULT_TYPE):
@@ -401,7 +376,7 @@ class TelegramCommandHandler:
             )
             return
         slot_label = StringParser.remove_first_word(message=callback_data)
-        message = f"/{TelegramCommandHandler.COMMAND_DRG} {id_string} {slot_label}"
+        message = f"/{Command.COMMAND_DRG} {id_string} {slot_label}"
         res = await TelegramCommandHandler.send_message(
             context=context,
             chat_id=from_chat_id,
@@ -436,36 +411,36 @@ class TelegramCommandHandler:
         identity_message = f"\\(from {clickable_link_for_telegram_id}\\)"
 
         # handle special case for all and help
-        if query.data == TelegramCommandHandler.CALLBACK_DATA_ALL:
+        if query.data == Command.CALLBACK_DATA_ALL:
             res = await TelegramCommandHandler.send_message(
                 context=context,
                 chat_id=query.message.chat.id,
-                text=f"/{TelegramCommandHandler.COMMAND_ALL}\t{identity_message}",
+                text=f"/{Command.COMMAND_ALL}\t{identity_message}",
                 parse_mode=ParseMode.MARKDOWN_V2
             )
             await TelegramCommandHandler.run_all(update=Update(update_id=res.id, message=res), context=context)
             return
-        elif query.data == TelegramCommandHandler.CALLBACK_DATA_HELP:
+        elif query.data == Command.CALLBACK_DATA_HELP:
             res = await TelegramCommandHandler.send_message(
                 context=context,
                 chat_id=query.message.chat.id,
-                text=f"/{TelegramCommandHandler.COMMAND_HELP}\t{identity_message}",
+                text=f"/{Command.COMMAND_HELP}\t{identity_message}",
                 parse_mode=ParseMode.MARKDOWN_V2
             )
             await TelegramCommandHandler.run_help(update=Update(update_id=res.id, message=res), _=None)
             return
-        elif query.data == TelegramCommandHandler.CALLBACK_DATA_AV:
+        elif query.data == Command.CALLBACK_DATA_AV:
             res = await TelegramCommandHandler.send_message(
                 context=context,
                 chat_id=query.message.chat.id,
-                text=f"/{TelegramCommandHandler.COMMAND_AV}\t{identity_message}",
+                text=f"/{Command.COMMAND_AV}\t{identity_message}",
                 parse_mode=ParseMode.MARKDOWN_V2
             )
             await TelegramCommandHandler.run_av(update=Update(update_id=res.id, message=res), _=None)
             return
         elif TelegramCommandHandler.is_callback_data_rg(query_data=query.data):
             slot_label = StringParser.get_last_word(message=query.data)
-            message = f"/{TelegramCommandHandler.COMMAND_RG} {id_string} {slot_label}"
+            message = f"/{Command.COMMAND_RG} {id_string} {slot_label}"
             res = await TelegramCommandHandler.send_message(
                 context=context,
                 chat_id=query.message.chat.id,
@@ -490,7 +465,7 @@ class TelegramCommandHandler:
             await TelegramCommandHandler.send_message(
                 context=context,
                 chat_id=query.message.chat.id,
-                text=f"/{TelegramCommandHandler.COMMAND_RT}\t{identity_message}",
+                text=f"/{Command.COMMAND_RT}\t{identity_message}",
                 parse_mode=ParseMode.MARKDOWN_V2
             )
             await TelegramCommandHandler.send_release_time_status(context=context, chat_id=query.message.chat.id)
@@ -806,7 +781,7 @@ class TelegramCommandHandler:
             effective_user = update.effective_user.username
 
         response, suggestion = TelegramCommandHandler.auto_reg_system.handle_register(
-            command_string_for_suggestion=TelegramCommandHandler.COMMAND_DRG,
+            command_string_for_suggestion=Command.COMMAND_DRG,
             username=effective_user,
             message=update.message.text,
             chat_id=update.message.chat_id
@@ -852,7 +827,7 @@ class TelegramCommandHandler:
         id_string = TelegramCommandHandler.get_id_string_from_telegram_user(user=effective_user)
 
         message = TelegramCommandHandler.auto_reg_system.handle_deregister(
-            command_string=TelegramCommandHandler.COMMAND_DRG,
+            command_string=Command.COMMAND_DRG,
             username=effective_user.username,
             id_string=id_string,
             message=update.message.text,
@@ -953,19 +928,21 @@ class TelegramCommandHandler:
     async def run_help(update: Update, _):
         TelegramCommandHandler.log_message_from_user(update=update)
 
-        response: str = "Use the following syntaxes:\n"
-        response += f"/{TelegramCommandHandler.COMMAND_REG} [name 1], ..., [name n] [slot]\t(register)\n"
-        response += f"/{TelegramCommandHandler.COMMAND_DEREG} [name 1], ..., [name n] [slot]\t(deregister)\n"
-        response += f"/{TelegramCommandHandler.COMMAND_RESERVE} [name 1], ..., [name n] [slot]\t(reserve)\n"
-        response += f"/{TelegramCommandHandler.COMMAND_ALL}\t(show entire list)\n"
-        response += f"/{TelegramCommandHandler.COMMAND_AV}\t(show available slots)\n"
-        response += f"/{TelegramCommandHandler.COMMAND_AKA} [alias]\t(set alias)\n"
-        response += f"/{TelegramCommandHandler.COMMAND_AKA}\t(view your alias)\n"
-        response += f"\n"
-        response += f"Shortened commands:\n"
-        response += f"/{TelegramCommandHandler.COMMAND_RG}\t(same as /reg)\n"
-        response += f"/{TelegramCommandHandler.COMMAND_DRG}\t(same as /dereg)\n"
-        response += f"/{TelegramCommandHandler.COMMAND_RS}\t(same as /reserve)\n"
-        response += f"\n"
-        response += f"Detailed guide: https://hackmd.io/@1UKfawZER96uwy_xohcquQ/B1fyW-c4R"
+        response: str = Term.HELP_TEXT
+
+        # response: str = "Use the following syntaxes:\n"
+        # response += f"/{Command.COMMAND_REG} [name 1], ..., [name n] [slot]\t(register)\n"
+        # response += f"/{Command.COMMAND_DEREG} [name 1], ..., [name n] [slot]\t(deregister)\n"
+        # response += f"/{Command.COMMAND_RESERVE} [name 1], ..., [name n] [slot]\t(reserve)\n"
+        # response += f"/{Command.COMMAND_ALL}\t(show entire list)\n"
+        # response += f"/{Command.COMMAND_AV}\t(show available slots)\n"
+        # response += f"/{Command.COMMAND_AKA} [alias]\t(set alias)\n"
+        # response += f"/{Command.COMMAND_AKA}\t(view your alias)\n"
+        # response += f"\n"
+        # response += f"Shortened commands:\n"
+        # response += f"/{Command.COMMAND_RG}\t(same as /reg)\n"
+        # response += f"/{Command.COMMAND_DRG}\t(same as /dereg)\n"
+        # response += f"/{Command.COMMAND_RS}\t(same as /reserve)\n"
+        # response += f"\n"
+        # response += f"Detailed guide: https://hackmd.io/@1UKfawZER96uwy_xohcquQ/B1fyW-c4R"
         await TelegramCommandHandler.reply_message(update=update, text=response)
