@@ -38,7 +38,7 @@ class ErrorMaker:
 
     @staticmethod
     def make_system_locked_exception() -> Exception:
-        return Exception(f"The system is locked! Please wait until being unlock!")
+        return Exception(f"The system is locked! Please wait until being unlocked!")
 
     @staticmethod
     def make_chat_id_enforcement() -> Exception:
