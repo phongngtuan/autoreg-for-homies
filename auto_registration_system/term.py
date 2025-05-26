@@ -11,11 +11,11 @@ class Term:
     HELP_TEXT = f"""
     Please use the following syntaxes:
     1. To register a slot, use
-        /{Command.COMMAND_RG} [name 1], [name 2], ..., [name n] [slot]
+        /{Command.COMMAND_RG} [name 1], ..., [name n] [slot]
     2. To reserve a slot, use
-        /{Command.COMMAND_RS} [name 1], [name 2], ..., [name n] [slot]
+        /{Command.COMMAND_RS} [name 1], ..., [name n] [slot]
     3. To deregister a slot from the list of main players/reserves, use
-        /{Command.COMMAND_DRG} [name 1], [name 2], ..., [name n] [slot]
+        /{Command.COMMAND_DRG} [name 1], ..., [name n] [slot]
     4. To show the full list, use
         /{Command.COMMAND_ALL}
     5. To show available slots, use
