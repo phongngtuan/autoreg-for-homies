@@ -14,7 +14,7 @@ class Term:
         /{Command.COMMAND_RG} [name 1], ..., [name n] [slot]
     2. To reserve a slot, use
         /{Command.COMMAND_RS} [name 1], ..., [name n] [slot]
-    3. To deregister a slot from the list of main players/reserves, use
+    3. To deregister from a slot (main players/reserves), use
         /{Command.COMMAND_DRG} [name 1], ..., [name n] [slot]
     4. To show the full list, use
         /{Command.COMMAND_ALL}
@@ -29,8 +29,8 @@ class Term:
     https://hackmd.io/@1UKfawZER96uwy_xohcquQ/B1fyW-c4R
     
     ---------------
-    For /{Command.COMMAND_RG}, if the list is full, the corresponding player(s) will be put into reserve list WITH the tag (pending). This means that the corresponding player(s) WILL be automatically inserted into main player list, if some other player deregisters, by respecting the "first in, first served" policy.
+    For /{Command.COMMAND_RG}, if the list is full, the corresponding player(s) will be put into reserve list WITH the tag (pending). This means that the corresponding player(s) WILL be automatically inserted into main player list, if some other player deregisters, by respecting the first-come, first-served basis.
     
-    For /{Command.COMMAND_RS}, the player(s) will be put into reserve list WITHOUT the tag (pending) to mean that the corresponding player(s) WILL NOT be automatically inserted into main player list. Only admin can move them to main player list if necessary.
+    For /{Command.COMMAND_RS}, the corresponding player(s) will be put into reserve list WITHOUT the tag (pending). This means that the corresponding player(s) WILL NOT be automatically inserted into main player list. Only admin can move them to main player list if necessary.
     
     """
