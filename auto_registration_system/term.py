@@ -28,9 +28,13 @@ class Term:
     See detailed guide from the below link. 
     https://hackmd.io/@1UKfawZER96uwy_xohcquQ/B1fyW-c4R
     
+    The source code is in the below link.
+    https://github.com/khaihanhtang/autoreg-for-homies
+    
     ---------------
-    For /{Command.COMMAND_RG}, if the list is full, the corresponding player(s) will be put into reserve list WITH the tag (pending). This means that the corresponding player(s) WILL be automatically inserted into main player list, if some other player deregisters, by respecting the first-come, first-served basis.
+    For /{Command.COMMAND_RG}, if the list is full, the corresponding player(s) will be put into the reserve list WITH the tag (pending). This means that the corresponding player(s) WILL be automatically inserted into the main player list, if some other player deregisters, by respecting the first-come, first-served basis.
     
-    For /{Command.COMMAND_RS}, the corresponding player(s) will be put into reserve list WITHOUT the tag (pending). This means that the corresponding player(s) WILL NOT be automatically inserted into main player list. Only admin can move them to main player list if necessary.
+    For /{Command.COMMAND_RS}, the corresponding player(s) will be put into reserve list WITHOUT the tag (pending). This means that the corresponding player(s) WILL NOT be automatically inserted into the main player list. Only admins can move them to the main player list if necessary.
     
+    Command /{Command.COMMAND_DRG} applies to both main and reserve players.
     """
