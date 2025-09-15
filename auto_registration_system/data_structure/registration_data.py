@@ -1,3 +1,5 @@
+from typing import Optional
+
 from ..exception.error_maker import ErrorMaker
 from .slot_manager import SlotManager
 
@@ -27,13 +29,17 @@ class RegistrationData:
             slot_name=slot_name, num_players=num_players
         )
 
-    def get_slot(self, slot_label) -> SlotManager or None:
+    def get_slot(self, slot_label) -> Optional[SlotManager]:
+        """Return the slot with the given label, or None if not found."""
         for date_venue in self._bookings_by_date_venue:
             if slot_label in self._bookings_by_date_venue[date_venue]:
                 return self._bookings_by_date_venue[date_venue][slot_label]
         return None
 
     def register_player(self, slot_label: str, player: str):
+        """Register a player to the slot with the given label.
+        If the slot is already full, player will be added to the reserve list.
+        If the slot is not found, raise an exception."""
         slot = self.get_slot(slot_label=slot_label)
         if slot is not None:
             slot.register(proposed_name=player)
