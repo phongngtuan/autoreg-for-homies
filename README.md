@@ -1,5 +1,50 @@
 This is the source code for auto-registering badminton slots, dedicated to badminton group Homies. This source code requires running on a server to handle requests from users via a Telegram bot.
 
+## Testing & CI/CD
+
+This project uses pytest for testing and GitHub Actions for continuous integration.
+
+### Running Tests Locally
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run all tests
+pytest tests/ -v
+
+# Run tests with coverage
+pytest tests/ --cov=auto_registration_system --cov-report=term-missing
+
+# Run specific test
+pytest tests/test_slot_manager.py::TestSlotManager::test_initialization -v
+```
+
+### GitHub Actions Workflows
+
+The project includes several automated workflows:
+
+- **CI/CD Pipeline** (`.github/workflows/ci.yml`): Runs tests on multiple Python versions (3.8-3.12)
+- **Code Quality** (`.github/workflows/lint.yml`): Checks code formatting and style
+- **Security Scanning** (`.github/workflows/security.yml`): Scans for security vulnerabilities
+- **Test Coverage**: Generates coverage reports and uploads to Codecov
+
+### Development Setup
+
+```bash
+# Install development dependencies
+pip install -r requirements-dev.txt
+
+# Format code
+black .
+
+# Sort imports
+isort .
+
+# Lint code
+flake8 .
+```
+
 ## License
 This source code [autoreg-for-homies](https://github.com/khaihanhtang/autoreg-for-homies) is licensed under [Apache License 2.0](https://github.com/khaihanhtang/autoreg-for-homies/blob/main/LICENSE).
 

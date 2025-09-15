@@ -1,11 +1,11 @@
-import pytest
-import sys
 import os
+import sys
+
+import pytest
 
 from auto_registration_system.data_structure.slot_manager import SlotManager
-from auto_registration_system.exception.exception_name_conflict import (
+from auto_registration_system.exception.exception_name_conflict import \
     NameConflictException
-)
 
 # Add the parent directory to Python path to import modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -100,7 +100,7 @@ class TestSlotManager:
         # TODO: Implement test for moving player from non-pending reservations
         slot_manager.non_pending_reservations = ["ReservedPlayer"]
         slot_manager.register("ReservedPlayer")
-        
+
         assert "ReservedPlayer" in slot_manager.players
         assert "ReservedPlayer" not in slot_manager.non_pending_reservations
 
